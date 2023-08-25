@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 
-const uri = ""
-
-const connectDB = () => {
-    console.log("Connect DB");
-    return mongoose.connect(uri, {
+const connectDB = (uri) => {
+    const connectDataBase = mongoose.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
+    console.log("Connect with DataBase");
+    return connectDataBase;
 }
 
 export default connectDB
