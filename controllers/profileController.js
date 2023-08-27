@@ -15,3 +15,12 @@ export const updateProfile = (req, res) => {
         message: "User profile has been updated"
     })
 }
+
+export const deleteProfile = (req, res) => {
+    console.log(req.params);
+    res.status(200).send({
+        status: "Success",
+        data: [],
+        message: "User profile has been deleted"
+    })
+}
