@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(helmet())
 app.use(morgan("common"))
 app.use((req, res, next) => {
-    req.body.date = new Date().toLocaleString()
+    // req.body.date = new Date().toLocaleString()
     console.log(req.body);
     next()
 })
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/profileRoutes', profileRoutes)
+app.use('/api/v1/user', profileRoutes)
 
 
 app.use('/api/v1', express.static(path.join(__dirname, 'public')))
