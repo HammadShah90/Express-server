@@ -135,7 +135,7 @@ export const unFollowProfile = async (req, res) => {
                 await currentUser.updateOne({ $pull: { followings: req.params.id } })
                 res.status(200).send({
                     status: "Success",
-                    message: "User has been followed",
+                    message: "User has been unfollowed",
                 })
             } else {
                 return res.status(403).send({
