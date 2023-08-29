@@ -15,6 +15,6 @@ postRoutes.get('/:id', getPost)
 postRoutes.put('/:id', updatePost)
 postRoutes.put('/:id/like', likePost)
 postRoutes.delete('/:id', deletePost)
-postRoutes.put('/timeline/all', timelinePost)
+postRoutes.get('/timeline/all', timelinePost)
 
 export default postRoutes

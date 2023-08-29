@@ -7,9 +7,17 @@ export const getProfile = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         const { password, updatedAt, ...other } = user._doc;
-        res.status(200).send(other);
-    } catch (err) {
-        res.status(500).send(err);
+        res.status(200).send({
+            status: "Success",
+            message: "Show user profile",
+            data: other,
+        });
+    } catch (error) {
+        console.log(error, "<<==Error");
+        res.status(500).send({
+            status: "Failed",
+            message: error.message,
+        });
     }
 }
 
@@ -23,7 +31,11 @@ export const updateProfile = async (req, res) => {
                 const salt = await bcrypt.genSalt(10);
                 req.body.password = await bcrypt.hash(req.body.password, salt);
             } catch (error) {
-                return res.status(500).send(error)
+                console.log(error, "<<==Error");
+                res.status(500).send({
+                    status: "Failed",
+                    message: error.message,
+                });
             }
         }
         try {
@@ -31,12 +43,22 @@ export const updateProfile = async (req, res) => {
                 ...req.body
             })
             // console.log(user);
-            res.status(200).send("Account has been updated")
+            res.status(200).send({
+                status: "Success",
+                message: "Account has been updated",
+            });
         } catch (error) {
-            return res.status(500).send(error)
+            console.log(error, "<<==Error");
+            res.status(500).send({
+                status: "Failed",
+                message: error.message,
+            });
         }
     } else {
-        return res.status(403).send("You can update only your profile")
+        return res.status(403).send({
+            status: "Failed",
+            message: "You can update only your profile",
+        });
     }
 }
 
@@ -47,12 +69,22 @@ export const deleteProfile = async (req, res) => {
         try {
             const user = await User.findByIdAndDelete(req.params.id)
             console.log(user);
-            res.status(200).send("Account has been deleted")
+            res.status(200).send({
+                status: "Success",
+                message: "Account has been deleted",
+            })
         } catch (error) {
-            return res.status(500).send(error)
+            console.log(error, "<<==Error");
+            res.status(500).send({
+                status: "Failed",
+                message: error.message,
+            });
         }
     } else {
-        return res.status(403).send("You can delete only your profile")
+        return res.status(403).send({
+            status: "Failed",
+            message: "You can delete only your profile",
+        });
     }
 }
 
@@ -66,15 +98,28 @@ export const followProfile = async (req, res) => {
             if (!user.followers.includes(req.body.userId)) {
                 await user.updateOne({ $push: { followers: req.body.userId } })
                 await currentUser.updateOne({ $push: { followings: req.params.id } })
-                res.status(200).send("User has been followed")
+                res.status(200).send({
+                    status: "Success",
+                    message: "User has been followed",
+                })
             } else {
-                res.status(403).send("you already follow this user");
+                return res.status(403).send({
+                    status: "Failed",
+                    message: "you already follow this user",
+                });
             }
         } catch (error) {
-            res.status(500).send(error);
+            console.log(error, "<<==Error");
+            res.status(500).send({
+                status: "Failed",
+                message: error.message,
+            });
         }
     } else {
-        res.status(403).send("You can't follow yourself");
+        return res.status(403).send({
+            status: "Failed",
+            message: "You can't follow yourself",
+        });
     }
 }
 
@@ -88,14 +133,27 @@ export const unFollowProfile = async (req, res) => {
             if (user.followers.includes(req.body.userId)) {
                 await user.updateOne({ $pull: { followers: req.body.userId } })
                 await currentUser.updateOne({ $pull: { followings: req.params.id } })
-                res.status(200).send("User has been unfollowed")
+                res.status(200).send({
+                    status: "Success",
+                    message: "User has been followed",
+                })
             } else {
-                res.status(403).send("you don't follow this user");
+                return res.status(403).send({
+                    status: "Failed",
+                    message: "you can't follow this user",
+                });
             }
         } catch (error) {
-            res.status(500).send(error);
+            console.log(error, "<<==Error");
+            res.status(500).send({
+                status: "Failed",
+                message: error.message,
+            });
         }
     } else {
-        res.status(403).send("You can't unfollow yourself");
+        return res.status(403).send({
+            status: "Failed",
+            message: "You can't unfollow yourself",
+        });
     }
 }
