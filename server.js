@@ -6,6 +6,7 @@ import morgan from 'morgan'
 import connectDB from './db/connect.js'
 import authRoutes from './routes/authRoutes.js'
 import profileRoutes from './routes/profileRoutes.js'
+import postRoutes from './routes/postRoutes.js'
 const app = express()
 const __dirname = path.resolve()
 
@@ -26,9 +27,14 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', profileRoutes)
+app.use('/api/v1/post', postRoutes)
 
 
 app.use('/api/v1', express.static(path.join(__dirname, 'public')))
+
+app.use((req, res, next) => {
+    res.send("ghalat jagah aagaey ho, aesa koi route hi nahin hai")
+})
 
 
 const PORT = process.env.PORT

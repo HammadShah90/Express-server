@@ -1,9 +1,20 @@
-import User from '../models/user.js'
+import Post from '../models/post.js'
 import bcrypt from 'bcrypt'
 
-// Getting User
-export const getProfile = async (req, res) => {
-    console.log(req.params);
+// Creating Post
+export const createPost = async (req, res) => {
+    const newPost = new Post(req.body)
+    try {
+        const savedPost = await newPost.save();
+        res.status(200).send(savedPost);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+// Getting Post
+export const getPost = async (req, res) => {
+    // console.log(req.params);
     try {
         const user = await User.findById(req.params.id);
         const { password, updatedAt, ...other } = user._doc;
@@ -13,51 +24,41 @@ export const getProfile = async (req, res) => {
     }
 }
 
-// Update User
-export const updateProfile = async (req, res) => {
-    console.log(req.params);
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-        if (req.body.password) {
-            // console.log(req.body.password);
-            try {
-                const salt = await bcrypt.genSalt(10);
-                req.body.password = await bcrypt.hash(req.body.password, salt);
-            } catch (error) {
-                return res.status(500).send(error)
-            }
+// Update Post
+export const updatePost = async (req, res) => {
+    // console.log(req.params);
+    try {
+        const post = await Post.findById(req.params.id);
+        // console.log(post._doc);
+        if (post.userId === req.body.userId) {
+            await post.updateOne({ $set: req.body })
+            res.status(200).send("Your post has been updated")
+        } else {
+            return res.status(403).send("You can update only your post")
         }
-        try {
-            const user = await User.findByIdAndUpdate(req.params.id, {
-                ...req.body
-            })
-            // console.log(user);
-            res.status(200).send("Account has been updated")
-        } catch (error) {
-            return res.status(500).send(error)
-        }
-    } else {
-        return res.status(403).send("You can update only your profile")
+    } catch (error) {
+        return res.status(500).send(error)
     }
 }
 
-// Delete User
-export const deleteProfile = async (req, res) => {
-    console.log(req.params);
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-        try {
-            const user = await User.findByIdAndDelete(req.params.id)
-            console.log(user);
-            res.status(200).send("Account has been deleted")
-        } catch (error) {
-            return res.status(500).send(error)
+// Delete Post
+export const deletePost = async (req, res) => {
+    // console.log(req.params);
+    try {
+        const post = await Post.findById(req.params.id);
+        if (post.userId === req.body.userId) {
+            await post.deleteOne();
+            res.status(200).send("Your post has been deleted");
+        } else {
+            return res.status(403).send("You can delete only your post");
         }
-    } else {
-        return res.status(403).send("You can delete only your profile")
+    } catch (error) {
+        return res.status(500).send(error);
     }
 }
 
-// Follow User
-export const followProfile = async (req, res) => {
+// Like/unlike Post
+export const likePost = async (req, res) => {
     console.log(req.params);
     if (req.body.userId !== req.params.id) {
         try {
@@ -78,8 +79,8 @@ export const followProfile = async (req, res) => {
     }
 }
 
-// Unfollow User
-export const unFollowProfile = async (req, res) => {
+// Timeline all Post
+export const timelinePost = async (req, res) => {
     console.log(req.params);
     if (req.body.userId !== req.params.id) {
         try {

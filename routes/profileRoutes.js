@@ -1,5 +1,11 @@
 import express from 'express';
-import { getProfile, updateProfile, deleteProfile, followProfile, unFollowProfile } from '../controllers/profileController.js';
+import {
+    getProfile,
+    updateProfile,
+    deleteProfile,
+    followProfile,
+    unFollowProfile
+} from '../controllers/profileController.js';
 
 const profileRoutes = express.Router()
 
